@@ -66,7 +66,7 @@ Morelog.prototype.__write = function(data, preventLog) {
     if (alreadyOpendToday) {
         fs.appendFileSync(this.m_file, data + eol);
     } else {
-        this.m_day = newDay;
+        this.m_day = new Date().getDate();
         var date = new Date();
         fs.appendFileSync(this.m_file, eol + date + eol + eol + data + eol);
     }
