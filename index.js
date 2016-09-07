@@ -88,7 +88,10 @@ Morelog.prototype.startLogServer = function(port) {
         console.log("Can not start Log-Server. Port required!");
 
     this.m_port = port;
-    this.m_server = http.createServer();
+    this.m_server = http.createServer((req, res) =>
+    {
+        this.__provideLog(req, res)
+    });
     this.m_server.listen(port)
 
     this.__serverEvents();
@@ -102,9 +105,18 @@ Morelog.prototype.__serverEvents = function() {
     var server = this.m_server;
 
     server.on('connection', function(request, response) {
-        console.log("Client connected")
+        that.info("Log-Server accessed");
     });
 }
+
+Morelog.prototype.__provideLog = function(req, res) {
+
+    var log = fs.readFileSync(this.m_file);
+      res.setHeader('Content-Type', 'text/html');
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end(log);
+
+};
 
 Morelog.prototype.closeLogServer = function() {
 
