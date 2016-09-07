@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var Morelog = require('./index.js');
 
-var log = new Morelog('test', 'cyan', '.test.log');
+var log = new Morelog('test', 'cyan', 'test.log');
 
 log.startLogServer(1540);
 

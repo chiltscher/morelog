@@ -3,12 +3,12 @@
     "description": "morelog provides more options to log data",
     "author": {
         "name": "Christian Hiltscher",
-        "email": "hiltscher.Christian@gmail.com"
+        "email": "hiltscher.christian@gmail.com"
     },
     "keywords": [
         "console", "log", "morelog"
     ],
-    "version": "0.2.0",
+    "version": "0.2.1",
     "main": "index",
     "bin": "bin/morelog",
     "preferGlobal": true,

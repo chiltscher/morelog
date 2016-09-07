@@ -8,7 +8,7 @@ var Morelog = function(prefix, color, file) {
     this.m_prefix = prefix.toUpperCase();
     this.m_color = color;
     this.m_date = true;
-    this.m_file = file;
+    this.m_file = file + '.mrlg';
     this.m_day = new Date().getDate();
     if (file) {
         this.m_log = true;
