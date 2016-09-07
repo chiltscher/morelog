@@ -16,7 +16,6 @@ var Morelog = function(prefix, color, file) {
 
     this.m_server = undefined;
     this.m_port = null;
-
 }
 
 Morelog.prototype.print = function(text, preventLog) {
@@ -81,6 +80,8 @@ Morelog.prototype.__date = function() {
 
 Morelog.prototype.startLogServer = function(port) {
 
+    var that = this;
+
     if (this.m_server)
         return false;
 
@@ -88,9 +89,8 @@ Morelog.prototype.startLogServer = function(port) {
         console.log("Can not start Log-Server. Port required!");
 
     this.m_port = port;
-    this.m_server = http.createServer((req, res) =>
-    {
-        this.__provideLog(req, res)
+    this.m_server = http.createServer(function(req, res){
+        that.__provideLog(req, res)
     });
     this.m_server.listen(port)
 
