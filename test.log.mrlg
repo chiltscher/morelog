@@ -1,0 +1,26 @@
+Sun Sep 11 2016 14:12:30 GMT+0200 (CEST)
+
+14:12:30 [TEST] - This is a .print
+14:12:30 [TEST WARNING] - This is a .warn
+14:12:30 [TEST ERROR] - THIS IS A .ERROR
+14:12:30 [TEST INFO] - This is a .info
+14:12:30 [TEST] - You will find this entry in your log file
+14:12:30 [TEST INFO] - Logfile provided @port 1540
+14:12:51 [TEST] - This is a .print
+14:12:51 [TEST WARNING] - This is a .warn
+14:12:51 [TEST ERROR] - THIS IS A .ERROR
+14:12:51 [TEST INFO] - This is a .info
+14:12:51 [TEST] - You will find this entry in your log file
+14:12:51 [TEST INFO] - Logfile provided @port 1540
+14:13:02 [TEST] - This is a .print
+14:13:02 [TEST WARNING] - This is a .warn
+14:13:02 [TEST ERROR] - THIS IS A .ERROR
+14:13:02 [TEST INFO] - This is a .info
+14:13:02 [TEST] - You will find this entry in your log file
+14:13:02 [TEST INFO] - Logfile provided @port 1540
+14:13:11 [TEST] - This is a .print
+14:13:11 [TEST WARNING] - This is a .warn
+14:13:11 [TEST ERROR] - THIS IS A .ERROR
+14:13:11 [TEST INFO] - This is a .info
+14:13:11 [TEST] - You will find this entry in your log file
+14:13:11 [TEST INFO] - Logfile provided @port 1540

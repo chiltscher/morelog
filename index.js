@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const eol = os.EOL;
 const http = require('http');
+const ps = require('process');
 
 var Morelog = function(prefix, color, file) {
     this.m_prefix = prefix.toUpperCase();
@@ -50,6 +51,14 @@ Morelog.prototype.info = function(text, preventLog) {
     this.__write(data, preventLog);
 }
 
+Morelog.prototype.debug = function(text) {
+
+    if(!this.__debug())
+        return;
+    var date = this.__date();
+    var data = date + '[DEBUGGER]' + ' - ' + text;
+    console.log(colors['yellow'](data));
+}
 Morelog.prototype.__write = function(data, preventLog) {
 
     if (!this.m_log)
@@ -78,6 +87,16 @@ Morelog.prototype.__date = function() {
         return '';
 }
 
+Morelog.prototype.__debug = function() {
+
+    var args = ps.argv;
+    for(arg in args){
+        if(args[arg]=="-dbg" || args[arg]=="--debugLog")
+            return true;
+    }
+    return false;
+}
+
 Morelog.prototype.startLogServer = function(port) {
 
     var that = this;
@@ -86,15 +105,15 @@ Morelog.prototype.startLogServer = function(port) {
         return false;
 
     if (!port)
-        console.log("Can not start Log-Server. Port required!");
+        this.error("Can not start Log-Server. Port required!");
 
     this.m_port = port;
     this.m_server = http.createServer(function(req, res){
         that.__provideLog(req, res)
     });
+    this.__serverEvents();
     this.m_server.listen(port)
 
-    this.__serverEvents();
 
     return true;
 }
@@ -106,6 +125,10 @@ Morelog.prototype.__serverEvents = function() {
 
     server.on('connection', function(request, response) {
         that.info("Log-Server accessed");
+    });
+
+    server.on('listening', function(){
+        that.info("Logfile provided @port "+that.m_port)
     });
 }
 
