@@ -3,7 +3,6 @@ const fs = require('fs');
 const os = require('os');
 const eol = os.EOL;
 const http = require('http');
-const ps = require('process');
 
 var Morelog = function(prefix, color, file) {
     this.m_prefix = prefix.toUpperCase();
@@ -89,7 +88,7 @@ Morelog.prototype.__date = function() {
 
 Morelog.prototype.__debug = function() {
 
-    var args = ps.argv;
+    var args = process.argv;
     for(arg in args){
         if(args[arg]=="-dbg" || args[arg]=="--debugLog")
             return true;
