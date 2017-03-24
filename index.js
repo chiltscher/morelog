@@ -4,96 +4,106 @@ const os = require('os');
 const eol = os.EOL;
 const http = require('http');
 
-var Morelog = function(prefix, color, file) {
+//  create a new instance of morelog with a specific name
+//  for example the name off the application using morelog
+var Morelog = function(prefix, color) {
+
     this.m_prefix = prefix.toUpperCase();
-    this.m_color = color;
-    this.m_date = true;
-    this.m_file = file + '.mrlg';
-    this.m_day = new Date().getDate();
-    if (file) {
-        this.m_log = true;
-    }
+    this.m_colors = {};
+    this.m_colors["print"] = color;
+    this.m_colors["warn"] = 'red';
+    this.m_colors["error"] = 'red';
+    this.m_colors["info"] = 'yellow';
+    this.m_colors["debug"] = 'yellow';
+
+    this.m_debugMode = this._isDebugMode();
+    this.m_logDir = this._setupDir();
+    this.m_extension = '.mrlg';
 
     this.m_server = undefined;
-    this.m_port = null;
+    this.m_port = undefined;
 }
 
 Morelog.prototype.print = function(text, preventLog) {
 
-    var date = this.__date();
-    var data = date + '[' + this.m_prefix + ']' + ' - ' + text;
-    console.log(colors[this.m_color](date + '[' + this.m_prefix + ']' + ' - ' + text));
-    this.__write(data, preventLog);
+    var date = this._getTime();
+    var color = this.m_colors['print'];
+    var data = '[ '+ date + ' - ' + this.m_prefix + ' ]   ' + text;
+    console.log(colors[color](data));
+    if(!preventLog)
+        this.log(data);
 }
 
 Morelog.prototype.warn = function(text, preventLog) {
 
-    var date = this.__date();
-    var data = date + '[' + this.m_prefix + ' WARNING]' + ' - ' + text;
-    console.log(colors['red'](data));
-    this.__write(data, preventLog);
+    var date = this._getTime();
+    var color = this.m_colors['warn'];
+    var data = '[ ' + date + ' - ' + this.m_prefix + ' WARNING ]   ' + text;
+    console.log(colors[color](data));
+    if(!preventLog)
+        this.log(data);
 }
 
 Morelog.prototype.error = function(text, preventLog) {
 
-    var date = this.__date();
-    var data = date + '[' + this.m_prefix + ' ERROR]' + ' - ' + text.toUpperCase();
-    console.log(colors['red'](data));
-    this.__write(data, preventLog);
+    var date = this._getTime();
+    var color = this.m_colors['error'];
+    var data = '[ ' + date + ' - ' + this.m_prefix + ' ERROR ]   ' + text;
+    console.log(colors[color](data));
+    if(!preventLog)
+        this.log(data);
 }
 
 Morelog.prototype.info = function(text, preventLog) {
 
-    var date = this.__date();
-    var data = date + '[' + this.m_prefix + ' INFO]' + ' - ' + text;
-    console.log(colors['yellow'](data));
-    this.__write(data, preventLog);
+    var date = this._getTime();
+    var color = this.m_colors['info'];
+    var data = '[ ' + date + ' - ' + this.m_prefix + ' INFO ]   ' + text;
+    console.log(colors[color](data));
+    if(!preventLog)
+        this.log(data);
 }
 
 Morelog.prototype.debug = function(text) {
 
-    if(!this.__debug())
+    if (!this.m_debugMode)
         return;
-    var date = this.__date();
-    var data = date + '[DEBUGGER]' + ' - ' + text;
-    console.log(colors['yellow'](data));
-}
-Morelog.prototype.__write = function(data, preventLog) {
-
-    if (!this.m_log)
-        return;
-
-    if (preventLog)
-        return
-
-    if (!fs.existsSync(this.m_file))
-        fs.writeFileSync(this.m_file, new Date() + eol + eol);
-
-    var alreadyOpendToday = new Date().getDate() == fs.statSync(this.m_file).atime.getDate();
-    if (alreadyOpendToday) {
-        fs.appendFileSync(this.m_file, data + eol);
-    } else {
-        this.m_day = new Date().getDate();
-        var date = new Date();
-        fs.appendFileSync(this.m_file, eol + date + eol + eol + data + eol);
-    }
+    var date = this._getTime();
+    var color = this.m_colors['debug'];
+    var data = '[ ' + date + ' - ' + this.m_prefix + ' DEBUG ]   ' + text;
+    console.log(colors[color](data));
 }
 
-Morelog.prototype.__date = function() {
-    if (this.m_date)
-        return new Date().toLocaleTimeString() + ' ';
-    else
-        return '';
-}
-
-Morelog.prototype.__debug = function() {
+Morelog.prototype._isDebugMode = function() {
 
     var args = process.argv;
-    for(arg in args){
-        if(args[arg]=="-dbg" || args[arg]=="--debugLog")
+    for (arg in args) {
+        if (args[arg] == "-dbg" || args[arg] == "--debugLog")
             return true;
     }
     return false;
+}
+
+Morelog.prototype._getTime = function() {
+    return new Date().toLocaleTimeString() + ' ';
+}
+
+Morelog.prototype._getDate = function() {
+    return new Date().toLocaleDateString() + ' ';
+}
+
+Morelog.prototype._setupDir = function(){
+    var path = '.logs';
+    if(!fs.existsSync(path))
+        fs.mkdirSync(path);
+    return path
+}
+
+Morelog.prototype.log = function(data){
+
+    var filename = this.m_logDir + '/' + this._getDate() + this.m_extension;
+    fs.appendFileSync(filename, data + eol);
+
 }
 
 Morelog.prototype.startLogServer = function(port) {
@@ -107,7 +117,7 @@ Morelog.prototype.startLogServer = function(port) {
         this.error("Can not start Log-Server. Port required!");
 
     this.m_port = port;
-    this.m_server = http.createServer(function(req, res){
+    this.m_server = http.createServer(function(req, res) {
         that.__provideLog(req, res)
     });
     this.__serverEvents();
@@ -126,17 +136,19 @@ Morelog.prototype.__serverEvents = function() {
         that.info("Log-Server accessed");
     });
 
-    server.on('listening', function(){
-        that.info("Logfile provided @port "+that.m_port)
+    server.on('listening', function() {
+        that.info("Logfile provided @port " + that.m_port)
     });
 }
 
 Morelog.prototype.__provideLog = function(req, res) {
 
     var log = fs.readFileSync(this.m_file);
-      res.setHeader('Content-Type', 'text/html');
-      res.writeHead(200, {'Content-Type': 'text/plain'});
-      res.end(log);
+    res.setHeader('Content-Type', 'text/html');
+    res.writeHead(200, {
+        'Content-Type': 'text/plain'
+    });
+    res.end(log);
 
 };
 
@@ -150,5 +162,15 @@ Morelog.prototype.closeLogServer = function() {
     return true;
 
 }
+
+Morelog.Error = function(name, origin, solution) {
+
+    this.m_name = name;
+    this.m_origin = origin;
+    this.m_solution = solution;
+
+    Morelog.m_errors.push(this);
+}
+
 
 module.exports = Morelog;
