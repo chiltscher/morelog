@@ -1,3 +1,5 @@
+var MorelogError = require('./src/Error');
+
 const colors = require('colors');
 var express = require('express');
 const path = require('path');
@@ -21,6 +23,7 @@ var Morelog = function(prefix, color) {
 
     // modes
     this.m_debugMode = this._isDebugMode();
+    this.m_dbgFile = 'mrlg.dbg';
 
     // files
     this.m_path = '.mrlgs';
@@ -42,9 +45,9 @@ Morelog.prototype.print = function(text, preventLog) {
 
     var date = this._getTime();
     var color = this.m_colors['print'];
-    var data = '[ '+ date + ' - ' + this.m_prefix + ' ]   ' + text;
+    var data = '[ ' + date + ' - ' + this.m_prefix + ' ]   ' + text;
     console.log(colors[color](data));
-    if(!preventLog)
+    if (!preventLog)
         this.log(data);
 }
 
@@ -54,7 +57,7 @@ Morelog.prototype.warn = function(text, preventLog) {
     var color = this.m_colors['warn'];
     var data = '[ ' + date + ' - ' + this.m_prefix + ' WARNING ]   ' + text;
     console.log(colors[color](data));
-    if(!preventLog)
+    if (!preventLog)
         this.log(data);
 }
 
@@ -64,7 +67,7 @@ Morelog.prototype.error = function(text, preventLog) {
     var color = this.m_colors['error'];
     var data = '[ ' + date + ' - ' + this.m_prefix + ' ERROR ]   ' + text;
     console.log(colors[color](data));
-    if(!preventLog)
+    if (!preventLog)
         this.log(data);
 }
 
@@ -74,7 +77,7 @@ Morelog.prototype.info = function(text, preventLog) {
     var color = this.m_colors['info'];
     var data = '[ ' + date + ' - ' + this.m_prefix + ' INFO ]   ' + text;
     console.log(colors[color](data));
-    if(!preventLog)
+    if (!preventLog)
         this.log(data);
 }
 
@@ -82,10 +85,12 @@ Morelog.prototype.debug = function(text) {
 
     if (!this.m_debugMode)
         return;
+
     var date = this._getTime();
     var color = this.m_colors['debug'];
     var data = '[ ' + date + ' - ' + this.m_prefix + ' DEBUG ]   ' + text;
     console.log(colors[color](data));
+    this.dbgLog(data);
 }
 
 // helpers and functions to check some things
@@ -110,27 +115,37 @@ Morelog.prototype._getDate = function() {
 
 // file system functions
 //==============================================================================
-Morelog.prototype._setupDir = function(){
+Morelog.prototype._setupDir = function() {
     var PATH = this.m_path;
-    if(!fs.existsSync(PATH))
+    if (!fs.existsSync(PATH))
         fs.mkdirSync(PATH);
+    if (!fs.existsSync(this.m_dbgFile));
+    fs.writeFileSync(this.m_dbgFile, this._getDate() +
+        " DEBUGGER " +
+        eol + eol);
     return PATH
 }
 
-Morelog.prototype._getAvailableLogFiles = function(){
+Morelog.prototype._getAvailableLogFiles = function() {
 
     this.m_logFiles = [];
     var PATH = this.m_path;
     var dir = fs.readdirSync(PATH);
     var that = this;
 
-    dir.forEach(function(file){
-        if(path.extname(file) === that.m_extension)
+    dir.forEach(function(file) {
+        if (path.extname(file) === that.m_extension)
             that.m_logFiles.push(file);
     });
 };
 
-Morelog.prototype.log = function(data){
+Morelog.prototype.dbgLog = function(data) {
+
+    fs.appendFileSync(this.m_dbgFile, data + eol);
+    this._getAvailableLogFiles();
+}
+
+Morelog.prototype.log = function(data) {
 
     var filename = this.m_logDir + '/' + this._getDate() + this.m_extension;
     fs.appendFileSync(filename, data + eol);
@@ -157,7 +172,9 @@ Morelog.prototype.startLogServer = function(port) {
 
     app.get('/', function(req, res) {
         that._getAvailableLogFiles();
-        res.render('index', {logFiles: that.m_logFiles});
+        res.render('index', {
+            logFiles: that.m_logFiles
+        });
     });
 
     this.m_server = app.listen(port);
@@ -186,17 +203,15 @@ Morelog.prototype.closeLogServer = function() {
 
 }
 
+//Morelog errors
+Morelog.prototype.defineError = function(name, origin, solution, code){
+    var error = new MorelogError(name, origin, solution, code);
+    return error;
+};
 
-// Morelog error // in process
-//==============================================================================
-Morelog.Error = function(name, origin, solution) {
-
-    this.m_name = name;
-    this.m_origin = origin;
-    this.m_solution = solution;
-    this.m_code = code;
-
-    Morelog.m_errors.push(this);
+Morelog.ErrorCode = function(code) {
+    console.log(this instanceof Morelog.ErrorCode);
+    this.m_code
 }
 
 

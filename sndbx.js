@@ -13,4 +13,11 @@ log.info('This is a .info');
 log.print('You will find this entry in your log file');
 log.print('You will NOT find THIS entry in your log file', true);
 
-log.debug('this is a debugging note')
+log.debug('this is a debugging note');
+
+var mlgE = log.defineError("unknow status",
+                                "ORIGIN",
+                                "do this to solve it",
+                                "MLG1324");
+
+console.log(mlgE);
