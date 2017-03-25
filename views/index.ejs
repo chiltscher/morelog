@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>MFP</title>
+    <link rel="stylesheet" href="lib/main.css">
+</head>
+
+<body>
+    <div class="head">
+        <h1>Morelog File-Provider</h1>
+    </div>
+
+    <div class="container">
+        <div class="filelist">
+            <ul>
+
+                <% logFiles.forEach(function(fileName){ %>
+                    <li class="fileName">
+                        <%= fileName %>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+        <div class="logfile">
+            <div class="content">
+
+            [ 13:51:31 - SERVER ] This is a .print<br> [ 13:51:31 - SERVER WARNING ] This is a .warn<br> [ 13:51:31 - SERVER ERROR ] This is a .error<br> [ 13:51:31 - SERVER INFO ] This is a .info<br> [ 13:51:31 - SERVER ] You will find this entry in
+            your log file<br> [ 13:51:34 - SERVER ] This is a .print<br> [ 13:51:34 - SERVER WARNING ] This is a .warn<br> [ 13:51:34 - SERVER ERROR ] This is a .error<br> [ 13:51:34 - SERVER INFO ] This is a .info<br> [ 13:51:34 - SERVER ] You will find
+            this entry in your log file<br>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+body{
+    width: 100%;
+    margin: 0;
+    background-color: #444444;
+    font-family: 'helvetica';
+}
+
+.container{
+    width: 100%;
+    margin: 0;
+}
+h1{
+    color: #ff5200;
+}
+ul{
+    margin: 0;
+    padding: 0;
+}
+.fileName{
+    padding: 20px;
+    list-style-type: none;
+    font-size: 1.5em;
+    border-bottom: white 1px solid;
+}
+
+.head{
+    padding-left: 20px;
+    color: white;
+    border-bottom: white 3px solid;
+}
+.filelist{
+    width: 33.3%;
+    height: 900px;
+    color: white;
+    float: left;
+    z-index: 1000;
+    box-shadow: black 1px 1px 5px;
+}
+
+.logfile{
+    width: 66.6%;
+    height: 900px;
+    float: right;
+    background-color: darkgrey;
+    line-height: 1.2em;
+}
+.content{
+    padding: 20px;
+
+}
