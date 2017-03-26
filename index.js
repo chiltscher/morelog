@@ -26,9 +26,12 @@ var Morelog = function(prefix, color) {
     this.m_dbgFile = 'mrlg.dbg';
 
     // files
+    //storing json files for the Morelog File Provider;
     this.m_path = '.mrlgs';
-    this.m_logDir = this._setupDir();
+    this.m_jLogPath = this.m_path + '/.jLog';
+    this.m_jLogExtension = '.jLog';
     this.m_extension = '.mrlg';
+    this.m_logDir = this._setupDir();
     this.m_logFiles = this._getAvailableLogFiles();
 
     // errors
@@ -43,42 +46,50 @@ var Morelog = function(prefix, color) {
 //==============================================================================
 Morelog.prototype.print = function(text, preventLog) {
 
-    var date = this._getTime();
+    var time = this._getTime();
+    var instance = this.m_prefix;
     var color = this.m_colors['print'];
-    var data = '[ ' + date + ' - ' + this.m_prefix + ' ]   ' + text;
+    var data = '[ ' + time + ' - ' + instance + ' ]   ' + text;
+    var json = {time: time, instance: instance, text: text};
     console.log(colors[color](data));
     if (!preventLog)
-        this.log(data);
+        this.log(data, json);
 }
 
 Morelog.prototype.warn = function(text, preventLog) {
 
-    var date = this._getTime();
+    var time = this._getTime();
     var color = this.m_colors['warn'];
-    var data = '[ ' + date + ' - ' + this.m_prefix + ' WARNING ]   ' + text;
+    var instance = this.m_prefix + ' WARNING';
+    var data = '[ ' + time + ' - ' + instance + ' ]   ' + text;
+    var json = {time: time, instance: instance, text: text};
     console.log(colors[color](data));
     if (!preventLog)
-        this.log(data);
+        this.log(data, json);
 }
 
 Morelog.prototype.error = function(text, preventLog) {
 
-    var date = this._getTime();
+    var time = this._getTime();
     var color = this.m_colors['error'];
-    var data = '[ ' + date + ' - ' + this.m_prefix + ' ERROR ]   ' + text;
+    var instance = this.m_prefix + ' ERROR';
+    var data = '[ ' + time + ' - ' + instance + ' ]   ' + text;
+    var json = {time: time, instance: instance, text: text};
     console.log(colors[color](data));
     if (!preventLog)
-        this.log(data);
+        this.log(data, json);
 }
 
 Morelog.prototype.info = function(text, preventLog) {
 
-    var date = this._getTime();
+    var time = this._getTime();
     var color = this.m_colors['info'];
-    var data = '[ ' + date + ' - ' + this.m_prefix + ' INFO ]   ' + text;
+    var instance = this.m_prefix + ' INFO';
+    var data = '[ ' + time + ' - ' + instance + ' ]   ' + text;
+    var json = {time: time, instance: instance, text: text};
     console.log(colors[color](data));
     if (!preventLog)
-        this.log(data);
+        this.log(data, json);
 }
 
 Morelog.prototype.debug = function(text) {
@@ -86,9 +97,11 @@ Morelog.prototype.debug = function(text) {
     if (!this.m_debugMode)
         return;
 
-    var date = this._getTime();
+    var time = this._getTime();
     var color = this.m_colors['debug'];
-    var data = '[ ' + date + ' - ' + this.m_prefix + ' DEBUG ]   ' + text;
+    var instance = this.m_prefix + ' DEBUG';
+    var data = '[ ' + time + ' - ' + instance + ' ]   ' + text;
+    var json = {time: time, instance: instance, text: text};
     console.log(colors[color](data));
     this.dbgLog(data);
 }
@@ -119,6 +132,11 @@ Morelog.prototype._setupDir = function() {
     var PATH = this.m_path;
     if (!fs.existsSync(PATH))
         fs.mkdirSync(PATH);
+
+    var jLogPATH = this.m_jLogPath;
+    console.log(jLogPATH);
+    if (!fs.existsSync(jLogPATH))
+        fs.mkdirSync(jLogPATH);
     if (!fs.existsSync(this.m_dbgFile));
     fs.writeFileSync(this.m_dbgFile, this._getDate() +
         " DEBUGGER " +
@@ -129,12 +147,12 @@ Morelog.prototype._setupDir = function() {
 Morelog.prototype._getAvailableLogFiles = function() {
 
     this.m_logFiles = [];
-    var PATH = this.m_path;
+    var PATH = this.m_jLogPath;
     var dir = fs.readdirSync(PATH);
     var that = this;
 
     dir.forEach(function(file) {
-        if (path.extname(file) === that.m_extension)
+        if (path.extname(file) === that.m_jLogExtension)
             that.m_logFiles.push(file);
     });
 };
@@ -145,10 +163,32 @@ Morelog.prototype.dbgLog = function(data) {
     this._getAvailableLogFiles();
 }
 
-Morelog.prototype.log = function(data) {
+Morelog.prototype.log = function(data, jlog) {
 
-    var filename = this.m_logDir + '/' + this._getDate() + this.m_extension;
+    var date = this._getDate();
+    var filename = this.m_logDir + '/' + date + this.m_extension;
     fs.appendFileSync(filename, data + eol);
+
+    //reading existing file
+    var file = './' + this.m_jLogPath + '/' + date + this.m_jLogExtension;
+    if(fs.existsSync(file)){
+        //parse it as json
+        var logArray = fs.readFileSync(file);
+        logArray = JSON.parse(logArray);
+        //push new log
+        logArray.push(jlog);
+        //override file
+        fs.writeFileSync(file, JSON.stringify(logArray));
+        return;
+    } else {
+        // create new array
+        var logArray = [];
+        //push new log
+        logArray.push(jlog);
+        //override file
+        fs.writeFileSync(file, JSON.stringify(logArray));
+    }
+
     this._getAvailableLogFiles();
 }
 

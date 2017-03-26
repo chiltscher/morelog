@@ -15,9 +15,9 @@
     <div class="container">
         <div class="filelist">
             <ul>
-
+                <li class="fileName head"><strong>Filename: </strong></li>
                 <% logFiles.forEach(function(fileName){ %>
-                    <li class="fileName">
+                    <li class="fileName" id="<%=fileName%>">
                         <%= fileName %>
                     </li>
                     <% }); %>
