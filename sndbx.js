@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 var Morelog = require('./index.js');
-Morelog.init({dir: 'example'});
-var log = new Morelog.Logger('server', 'cyan');
 
+var options = {
+    dir: 'logfiles'
+}
+
+Morelog.init();
+
+var log = new Morelog.Logger('server', 'cyan');
 var logProvider = new Morelog.LogProvider(1540);
 
 log.print('This is a .print');
