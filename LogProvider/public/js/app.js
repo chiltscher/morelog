@@ -2,11 +2,15 @@ var socket = io(document.origin);
 
 socket.on('files', function(files){
     updateFilelist(files);
+    socket.emit('getContent', lastOpend);
 });
 
 socket.on('content', function(file){
+    document.cookie = "lastOpend="+file.filename;
     updateContentBox(file);
 });
+
+var lastOpend = document.cookie.split("lastOpend=")[1];
 
 function updateContentBox(file){
     var filename = file.filename;

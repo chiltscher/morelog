@@ -29,12 +29,12 @@ html, body{
 
 .listelement.head{
     border-bottom: blanchedalmond 1px solid;
-    font-size: 1.2em;
+    font-size: 1.4em;
 }
 
 .listelement.file{
-    -webkit-transition: background-color 0.5s;
-    transition: background-color 0.5s;
+    -webkit-transition: background-color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .listelement.file.active{
