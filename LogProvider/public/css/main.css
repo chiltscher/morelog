@@ -26,16 +26,23 @@ ul {
     padding: 0;
 }
 
-.fileName {
+.fileName.head {
     padding: 20px;
     list-style-type: none;
     font-size: 1.5em;
     border-bottom: white 1px solid;
 }
 
-.fileName:hover {
-    animation-name: fade;
-    animation-duration: 0.5s;
+.fileName.file{
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 1.1em;
+    -webkit-transition: background-color 0.5s;
+    transition: background-color 0.5s;
+}
+
+.fileName.file:hover {
     background-color: orangered;
     cursor: pointer;
 }
@@ -67,9 +74,4 @@ ul {
     background-color: darkgrey;
     line-height: 1.2em;
     margin-left: 30%;
-}
-
-@keyframes fade {
-    from {background-color: #444444;}
-    to {background-color: orangered;}
 }

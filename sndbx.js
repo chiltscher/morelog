@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 var Morelog = require('./index.js');
+Morelog.init({dir: 'example'});
+var log = new Morelog.Logger('server', 'cyan');
 
-var log = new Morelog('server', 'cyan');
-
-log.startLogServer(1540);
+var logProvider = new Morelog.LogProvider(1540);
 
 log.print('This is a .print');
 log.warn('This is a .warn');
@@ -14,10 +14,3 @@ log.print('You will find this entry in your log file');
 log.print('You will NOT find THIS entry in your log file', true);
 
 log.debug('this is a debugging note');
-
-var mlgE = log.defineError("unknow status",
-                                "ORIGIN",
-                                "do this to solve it",
-                                "MLG1324");
-
-console.log(mlgE);
