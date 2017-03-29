@@ -2,7 +2,8 @@ var socket = io(document.origin);
 
 socket.on('files', function(files){
     updateFilelist(files);
-    socket.emit('getContent', lastOpend);
+    if(lastOpend)
+        socket.emit('getContent', lastOpend);
 });
 
 socket.on('content', function(file){
