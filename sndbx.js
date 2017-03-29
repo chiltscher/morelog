@@ -7,7 +7,7 @@ var options = {
 
 Morelog.init();
 
-var log = new Morelog.Logger('server', 'cyan');
+var log = new Morelog.Logger('app', 'cyan');
 var logProvider = new Morelog.LogProvider(1540);
 
 log.print('This is a .print');
