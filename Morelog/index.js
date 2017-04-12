@@ -38,7 +38,11 @@ Morelog._getTime = function() {
 
 //get the date for the filenames
 Morelog._getDate = function() {
-    return new Date().toLocaleDateString();
+    var date = new Date().toLocaleDateString();
+    while(date.indexOf('/') !== -1){
+        date = date.replace('/', '-');
+    }
+    return date;
 }
 
 // set standard directory to store the log files
